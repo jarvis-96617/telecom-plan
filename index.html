@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中華電信衝刺計畫 🏆</title>
+    <style>
+        :root {
+            --bg-color: #f1f3f6;
+            --card-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --primary-color: #0071e3; 
+            --accent-color: #ff9500;  
+            --success-color: #34c759; 
+            --danger-color: #ff3b30;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- 跨平台響應式佈局架構 --- */
+        .app-layout {
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* 左側導覽列 (電腦版) / 頂端導覽列 (手機版) */
+        .sidebar {
+            background-color: var(--card-bg);
+            padding: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            z-index: 10;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 0 16px 40px 16px;
+        }
+
+        /* 電腦版樣式 (螢幕寬度大於 768px) */
+        @media (min-width: 768px) {
+            .app-layout {
+                flex-direction: row;
+                padding: 24px;
+                gap: 24px;
+            }
+            .sidebar {
+                width: 240px;
+                border-radius: 20px;
+                height: fit-content;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+                position: sticky;
+                top: 24px;
+            }
+            .main-content {
+                padding: 0;
+            }
+            .nav-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        /* 手機版樣式 (iPhone) */
+        @media (max-width: 767px) {
+            .sidebar {
+                position: sticky;
+                top: 0;
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                padding: 12px 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            }
+            .nav-group {
+                display: flex;
+                justify-content: space-between;
+                background: #e3e3e8;
+                padding: 3px;
+                border-radius: 10px;
+            }
+        }
+
+        /* --- 導覽按鈕與數字泡泡 --- */
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #48484a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 手機版按鈕等寬平分 */
+        @media (max-width: 767px) {
+            .nav-btn {
+                flex: 1;
+                justify-content: center;
+                gap: 4px;
+                padding: 8px 4px;
+                font-size: 13px;
+                border-radius: 7px;
+            }
+            .nav-btn .count-badge {
+                font-size: 11px;
+                padding: 1px 5px;
+            }
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-btn.active .count-badge {
+            background-color: rgba(255,255,255,0.25);
+            color: white;
+        }
+
+        .count-badge {
+            background-color: #e5e5ea;
+            color: #3a3a3c;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* 頂端總進度面板 */
+        .header-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (min-width: 768px) { .header-section { margin-top: 0; } }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: #004385;
+        }
+
+        .progress-wrapper {
+            background-color: #e5e5ea;
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #0071e3, #34c759);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin: 10px 0 12px 4px;
+        }
+
+        /* 讀書卡片設計 */
+        .task-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* iOS 風格自訂圓形勾選鈕 */
+        .checkbox-container {
+            position: relative;
+            margin-right: 14px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0; width: 0;
+        }
+
+        .checkmark {
+            height: 24px;
+            width: 24px;
+            background-color: #fff;
+            border: 2px solid #c7c7cc;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 8px; top: 4px;
+            width: 5px; height: 10px;
+            border: solid white;
+            border-width: 0 2.5px 2.5px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .task-content { flex: 1; }
+
+        .badge-group {
+            margin-bottom: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+        .badge-subject { background-color: #e5f1ff; color: var(--primary-color); }
+        .badge-stage { background-color: #f2f2f7; color: #555559; }
+        .badge-rest { background-color: #ffe6e6; color: var(--danger-color); }
+        .badge-status-delayed { background-color: #fff0d4; color: var(--accent-color); font-weight: 700; }
+
+        .task-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+        .task-meta { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; display: flex; gap: 10px; }
+        .task-notes { font-size: 12px; color: #8a4b00; background-color: #fff9e6; padding: 8px 12px; border-radius: 10px; border-left: 4px solid var(--accent-color); margin-top: 6px; line-height: 1.4; }
+
+        /* 卡片右下角控制按鈕區 */
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        .action-btn {
+            background: #f2f2f7;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #555559;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .action-btn:hover { background: #e5e5ea; }
+        .action-btn.delay-trigger { color: var(--accent-color); }
+
+        /* 已完成項目的低調置灰與刪除線 */
+        .task-card.status-done .task-title,
+        .task-card.status-done .task-meta,
+        .task-card.status-done .task-notes {
+            text-decoration: line-through;
+            color: var(--text-sub);
+        }
+        .task-card.status-done .badge { background-color: #e5e5ea; color: #8e8e93; }
+        .task-card.status-done .task-notes { background-color: transparent; border-left-color: #d1d1d6; }
+        
+        /* 查無資料時的空白狀態提示 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <div class="sidebar">
+            <div class="nav-group">
+                <button class="nav-btn active" id="btn-todo" onclick="switchFilter('todo')">
+                    <span>⏳ 未完成</span> <span class="count-badge" id="count-todo">0</span>
+                </button>
+                <button class="nav-btn" id="btn-delayed" onclick="switchFilter('delayed')">
+                    <span>⚠️ 延遲待完成</span> <span class="count-badge" id="count-delayed">0</span>
+                </button>
+                <button class="nav-btn" id="btn-done" onclick="switchFilter('done')">
+                    <span>✅ 已完成</span> <span class="count-badge" id="count-done">0</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header-section">
+                <h1 id="main-title">🏆 中華電信衝刺計畫</h1>
+                <div class="progress-wrapper">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-text" id="progress-text">總進度：已完成 0 / 0 (0%)</div>
+            </div>
+
+            <div class="section-title" id="current-view-title">⏳ 未完成計畫</div>
+            <div id="plan-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // 完整的 125 筆讀書計畫大資料庫
+        const myReadingPlan = [
+            {"id":"p1","date":"2026/06/27","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"01_第1章 緒論","notes":"開訓第一天！通訊系統精簡章節，先建立整體架構與頻譜觀念。"},
+            {"id":"p2","date":"2026/06/28","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"01_基本計概(硬碟) 與 02_記憶體","notes":"下班前或週末有大塊時間可以好好攻讀核心計概觀念。"},
+            {"id":"p3","date":"2026/06/29","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"01-01_基礎核心單字/名詞1~200 與 01-02_基礎核心單字/名詞201~400","notes":"習慣在週間下班利用大腦尚清醒時速讀單字。"},
+            {"id":"p4","date":"2026/06/30","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"01-01_電流與01-02_色碼電阻","notes":"本科基礎！直接做練習題。若全對可直接跳過影片以省時間。"},
+            {"id":"p5","date":"2026/07/01","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"01_網路 (段)","notes":"網路通信與計概息息相關。理解網路分層模型概念。"},
+            {"id":"p6","date":"2026/07/02","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"邏輯思維","progress":"01-01_CH1 數的能力與應用/1-1 整數的計算","notes":"羽球日。運動完大腦較累安排較輕鬆的邏輯基礎題。"},
+            {"id":"p7","date":"2026/07/03","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"03_整數表示","notes":"涉及二進位、補數與浮點數表示法。此章為計算題熱門考點。"},
+            {"id":"p8","date":"2026/07/04","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"04-00_4.1頻率轉移原理與超外差接收 與 04-01_4.1~4.2DSB-SC調變","notes":"進入調變核心。週末精神好攻讀通訊重難點。"},
+            {"id":"p9","date":"2026/07/05","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"04_數位邏輯 與 05_S-R 正反器","notes":"邏輯閘組合與序向電路基礎。觀念清楚即可不需過度深究複雜設計。"},
+            {"id":"p10","date":"2026/07/06","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"01-03_基礎核心單字/名詞401~600 與 01-04_基礎核心單字/名詞601~752","notes":"持續累積單字量。聽老師講解字根字首記憶法。"},
+            {"id":"p11","date":"2026/07/07","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"02-01_能量 與 02-02_ex7 p.22","notes":"題目驅動！快速刷完本章節所有習題與範例。"},
+            {"id":"p12","date":"2026/07/08","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"02_路由器","notes":"理解路由器在網路層的角色與路由表基本概念。"},
+            {"id":"p13","date":"2026/07/09","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"邏輯思維","progress":"01-02_CH1 數的能力與應用/1-3 代數方程式","notes":"羽球日。一元二次或聯立方程式的基本觀念複習。"},
+            {"id":"p14","date":"2026/07/10","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"06_OS演進 1.離線作業offline","notes":"作業系統章節開始。理解OS發展歷史與分時系統.。"},
+            {"id":"p15","date":"2026/07/11","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"04-02_4.3 Conventional AM 與 CO5: 04-03_4.4~4.5 SSB調變","notes":"AM調變與SSB單邊帶調變。掌握頻寬計算與調變指數。"},
+            {"id":"p16","date":"2026/07/12","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"07_命令直譯器 與 08_死結 deadlock","notes":"死結(Deadlock)的四個必要條件與預防方法是超級大必考點。"},
+            {"id":"p17","date":"2026/07/13","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"01-05_基礎核心單字/動詞1~200 與 01-06_基礎核心單字/動詞201~413","notes":"動詞通常是文法題和閱讀的關鍵，務必熟記。"},
+            {"id":"p18","date":"2026/07/14","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"03-01_例題6 例題解析 P30 與 03-02_節點電壓法","notes":"節點電壓法是電路分析的核心利器，一定要練到直覺反射。"},
+            {"id":"p19","date":"2026/07/15","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"03_WIFI IEEE802.1 P18","notes":"無線網路IEEE 802.11各代協定標準與速度頻段對比。"},
+            {"id":"p20","date":"2026/07/16","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"邏輯思維","progress":"01-03_CH1 數的能力與應用/1-5 數列與級數","notes":"羽球日。等差、等比數列求和公式複習。"},
+            {"id":"p21","date":"2026/07/17","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"09_Page Table實作","notes":"虛擬記憶體、分頁(Paging)與分段(Segmentation)機制。"},
+            {"id":"p22","date":"2026/07/18","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"04-04_4.6 VSB調變原理 與 05-01_第5章 類比通信/5.1 角度調變總論","notes":"進入角度調變(FM/PM)。理解瞬時頻率與相位變化。"},
+            {"id":"p23","date":"2026/07/19","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"10_磁碟管理 與 11_刪除共同運算式","notes":"磁碟排程演算法(FCFS, SSTF, SCAN)觀念要很清晰。"},
+            {"id":"p24","date":"2026/07/20","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"01-07_基礎核心單字/形容詞 與 01-08_基礎核心單字/副詞","notes":"基礎核心單字全部完結！零碎時間可用App複習這700多字。"},
+            {"id":"p25","date":"2026/07/21","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"04-01_迴路電流法 與 04-02_戴維寧定理","notes":"戴維寧定理與諾頓定理是每年計算題鐵考題！精熟公式。"},
+            {"id":"p26","date":"2026/07/22","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"04_訊框化 p.22","notes":"資料鏈結層(Data Link Layer)訊框化與流量控制基本概念。"},
+            {"id":"p27","date":"2026/07/23","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"邏輯思維","progress":"02_CH2 邏輯/2-1 集合論","notes":"羽球日。集合、聯集、交集與真值表觀念。邏輯思維完結！"},
+            {"id":"p28","date":"2026/07/24","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"12_指標變數","notes":"指標(Pointer)是C/C++的大難點。搞懂記憶體位址與取值。"},
+            {"id":"p29","date":"2026/07/25","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"05-02_5.2 FM調變器~5.3 FM解調變器","notes":"類比通信調變部分結束。掌握卡森公式(Carson's Rule)頻寬計算。"},
+            {"id":"p30","date":"2026/07/26","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"13_循序 與 14_繼承","notes":"進入物件導向程式設計(OOP)。封裝、繼承、多型必考專有名詞。"},
+            {"id":"p31","date":"2026/07/27","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"02-01_進階核心單字/名詞1~300","notes":"進入進階單字。每天給自己一個高強度輸入。"},
+            {"id":"p32","date":"2026/07/28","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"05-01_例題5 例題解析 P59 與 05-02_Y與△互換","notes":"Y-Delta互換與最大功率傳輸定理。動手多計算。"},
+            {"id":"p33","date":"2026/07/29","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"05_有線網路-碰撞偵測","notes":"CSMA/CD與CSMA/CA原理對比。電信網路建設大考點！"},
+            {"id":"p34","date":"2026/07/30","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"02-02_進階核心單字/名詞301~684(前半)","notes":"羽球日。進度折半，看一小時進階名詞單字。"},
+            {"id":"p35","date":"2026/07/31","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"15_Call by reference","notes":"參數傳遞機制(Call by value/reference/name)對比。"},
+            {"id":"p36","date":"2026/08/01","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"08-01_第8章 從類比到數位(ADC 原理)/8.1 線碼格式","notes":"轉入數位通信。數位信號線碼(Line Code)種類如AMI、HDB3。"},
+            {"id":"p37","date":"2026/08/02","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"16_抽象類別 與 17_最大公因數","notes":"抽象類別與介面差異。後半段為演算法基礎與遞迴觀念。"},
+            {"id":"p38","date":"2026/08/03","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"02-02_進階核心單字/名詞301~684(後半)","notes":"把剩餘的進階名詞單字看完，保持語感。"},
+            {"id":"p39","date":"2026/08/04","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"06-01_p.67 與 06-02_電容量","notes":"電容量計算與電容串並聯。記熟電容電壓不能突變。"},
+            {"id":"p40","date":"2026/08/05","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"06_IP位置 p.44","notes":"IPv4子網路切分(Subnetting)與CIDR表示法.。計算題常客！"},
+            {"id":"p41","date":"2026/08/06","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"02-03_進階核心單字/動詞","notes":"羽球日。出遊前一晚，輕鬆看英文動詞單字。"},
+            {"id":"p42","date":"2026/08/07","day":"五","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"🏖️ 家族旅遊第一天","notes":"拋開書本，享受與家人的相處時光。"},
+            {"id":"p43","date":"2026/08/08","day":"六","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"🏖️ 家族旅遊第二天","notes":"充飽電，準備下週回歸學習狀態。"},
+            {"id":"p44","date":"2026/08/09","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"18_Ginked Gist 種類 與 19_佇列","notes":"資料結構重要章節。Linked List 與 Queue(佇列)基本操作。"},
+            {"id":"p45","date":"2026/08/10","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"02-04_進階核心單字/形容詞 與 02-05_進階核心單字/副詞","notes":"進階字彙全部結束！單字基本功已經打穩。"},
+            {"id":"p46","date":"2026/08/11","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"07-01_例題6 例題解析 P84 與 07-02_磁場電壓","notes":"電感與電磁感應。楞次定律與法拉第定律觀念。"},
+            {"id":"p47","date":"2026/08/12","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"07_指令","notes":"常見網路網管指令如 ping, traceroute, nslookup 意涵。"},
+            {"id":"p48","date":"2026/08/13","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-01_五大句型","notes":"羽球日。進入英文文法核心：五大基本句型結構。"},
+            {"id":"p49","date":"2026/08/14","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"20_B.T演算法","notes":"二元樹(Binary Tree)的前序、中序、後序走訪必考！"},
+            {"id":"p50","date":"2026/08/15","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"08-02_8.2 取樣 與 08-03_8.2 取樣 贗頻計算","notes":"Nyquist取樣定理，無失真最小取樣頻率與贗頻計算，超級大重點！"},
+            {"id":"p51","date":"2026/08/16","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"21_圖形追蹤 與 22_排序","notes":"圖形(Graph)走訪DFS/BFS與排序法(Bubble, Quick, Merge)。"},
+            {"id":"p52","date":"2026/08/17","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"03-02_動詞時態","notes":"搞懂現在完成式、過去完成式等核心時態差別。"},
+            {"id":"p53","date":"2026/08/18","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"08-01_佛萊明右手 與 08-02_儲存能量","notes":"佛萊明右手定則與電感儲能公式 (W = 0.5 * L * I^2)。"},
+            {"id":"p54","date":"2026/08/19","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"08_應用層","notes":"常見應用層協定：DNS, DHCP, HTTP, FTP 埠號(Port)背熟。"},
+            {"id":"p55","date":"2026/08/20","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-03_助動詞","notes":"羽球日。常規助動詞與情態助動詞用法。"},
+            {"id":"p56","date":"2026/08/21","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"23_高等樹","notes":"AVL樹、B-Tree等進階樹狀結構定義，通常考選擇題觀念。"},
+            {"id":"p57","date":"2026/08/22","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"08-04_8.3 量化 與 08-05_8.4 多工技術","notes":"PCM脈衝碼調變系統。量化階數、量化誤差與TDM多工。"},
+            {"id":"p58","date":"2026/08/23","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"24_常見的設備 與 25_資料鏈結層-乙太網路","notes":"集線器、交換器、路由器差異；VLAN概念。(與網通高度重疊)"},
+            {"id":"p59","date":"2026/08/24","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"03-04_被動語態 與 03-05_不定詞與動名詞","notes":"精選文法高頻考點：被動語態與動詞後接to V或V-ing。"},
+            {"id":"p60","date":"2026/08/25","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"09_ex8 p.116","notes":"直流暫態電路(RC/RL充放電)。時間常數(Tau)計算要非常熟。"},
+            {"id":"p61","date":"2026/08/26","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"09_資安5大目標","notes":"資訊安全CIA三要素：機密性、完整性、可用性與不可否認性。"},
+            {"id":"p62","date":"2026/08/27","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-06_分詞","notes":"羽球日。現在分詞(Ving)與過去分詞(Vp.p.)當形容詞的修飾機制。"},
+            {"id":"p63","date":"2026/08/28","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"26_傳輸層","notes":"TCP與UDP對比。三向交握(Three-way handshake)機制熟記。"},
+            {"id":"p64","date":"2026/08/29","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"10-01_第10章 帶通數位通信系統/10.1 Coherent PSK","notes":"數位帶通調變：BPSK之調變、解調原理與星座圖。"},
+            {"id":"p65","date":"2026/08/30","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"27_資安特性 與 28_資安重要技術","notes":"現代密碼學基礎、對稱式(AES)與非對稱式(RSA)加密、數位簽章。"},
+            {"id":"p66","date":"2026/08/31","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"03-07_名詞子句","notes":"學習由that, whether, if或疑問詞引導的名詞子句結構。"},
+            {"id":"p67","date":"2026/09/01","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"10_頻率、週期級方程式","notes":"進入交流電路！弦波交流電的有效值、平均值、相量表示法。"},
+            {"id":"p68","date":"2026/09/02","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"10_防火牆","notes":"防火牆分類：封包過濾型、應用層閘道器等原理對比。"},
+            {"id":"p69","date":"2026/09/03","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-08_形容詞子句 (前半)","notes":"關係代名詞(who, which, that)修飾先行詞用法。"},
+            {"id":"p70","date":"2026/09/04","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"29_結構化查詢語言(SQL)","notes":"SQL語法基礎。Select, Group By, Having, Join觀念鐵考！"},
+            {"id":"p71","date":"2026/09/05","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"10-02_10.1 QPSK調變器 與 10-03_10.2 ASK~10.3 混合型","notes":"QPSK與MQAM調變.。頻寬效率計算為計算題常規點。"},
+            {"id":"p72","date":"2026/09/06","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"30_關聯式代數","notes":"資料庫正規化(1NF, 2NF, 3NF, BCNF)定義。計概函授全數完結！"},
+            {"id":"p73","date":"2026/09/07","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"03-08_形容詞子句 (後半)","notes":"限定用法與非限定用法對比。"},
+            {"id":"p74","date":"2026/09/08","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"11-01_RLC串聯電路 與 11-02_p.168","notes":"RLC阻抗與導納計算。掌握電壓與電流的相位領前/落後關係。"},
+            {"id":"p75","date":"2026/09/09","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"11_data 傳輸","notes":"基頻傳輸與寬頻傳輸、雙絞線、光纖傳輸特性。"},
+            {"id":"p76","date":"2026/09/10","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-09_副詞子句 與 03-10_假設語氣","notes":"羽球日。時間/原因副詞子句與假設語氣。文法完結！"},
+            {"id":"p77","date":"2026/09/11","day":"五","stage":"網路通信","progress":"12_數位編碼","notes":"曼徹斯特編碼(Manchester)特點：具備自我同步能力，必考！"},
+            {"id":"p78","date":"2026/09/12","day":"六","stage":"通訊系統","progress":"10-04_Coherent FSK 與 10-05_10.5 非同調調變","notes":"FSK頻寬與正交性。恭喜通訊系統精選精華章節全數看過一遍！"},
+            {"id":"p79","date":"2026/09/13","day":"日","stage":"網路通信","progress":"13_fragmentation定義 P29 與14_第四本p.12","notes":"IP分段欄位計算。恭喜網路通信函授所有章節全數完結！"},
+            {"id":"p80","date":"2026/09/14","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"04-02_綜合閱讀理解(I)/108~111普考克漏字","notes":"進入閱讀實戰。練習克漏字的前後文關鍵字推導法。"},
+            {"id":"p81","date":"2026/09/15","day":"二","stage":"基本電學","progress":"12-01_複數功率 與12-02_串聯諧振","notes":"交流電路視在功率、虛功率、實功率、功率因數改善與諧振電路公式。"},
+            {"id":"p82","date":"2026/09/16","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"04-01_綜合閱讀理解(I)/108~110地特四等克漏字","notes":"多做歷屆試題，抓出高頻出現的片語跟轉折詞。"},
+            {"id":"p83","date":"2026/09/17","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"04-03_綜合閱讀理解(I)/108~110地特四等閱讀","notes":"羽球日。閱讀測驗練習，先看題目再回文章找答案。"},
+            {"id":"p84","date":"2026/09/18","day":"五","stage":"基本電學","progress":"13_p.197 與 14_例題解析 P213","notes":"互感電路與三相交流電路基礎功率計算。恭喜基本電學全數完結！"},
+            {"id":"p85","date":"2026/09/19","day":"六","stage":"英文","progress":"04-04_綜合閱讀 與 05-01_綜合閱讀(II)/地特三等克漏字","notes":"週末大塊時間訓練長篇英文閱讀的專注力。"},
+            {"id":"p86","date":"2026/09/20","day":"日","stage":"英文","progress":"05-02_高考克漏字 與 05-03_地特三等閱讀","notes":"攻讀三等/高考等級的閱讀，回頭看中華電信考試會變簡單。"},
+            {"id":"p87","date":"2026/09/21","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"05-04_綜合閱讀理解(II)/111高考閱讀","notes":"全科目所有函授影片正式全數完結！超級厲害的里程碑！"},
+            {"id":"p88","date":"2026/09/22","day":"二","stage":"全科自修統整","hours":"2小時","subject":"總複習","progress":"自主整理：計算機概論與網路通信核心錯題/筆記","notes":"趁記憶猶新，把之前看片畫線的重點整理成心智圖或重點卡。"},
+            {"id":"p89","date":"2026/09/23","day":"三","stage":"全科自修統整","hours":"2小時","subject":"總複習","progress":"自主整理：基本電學公式卡與通訊系統觀念筆記","notes":"出國前夕把所有學過的東西在大腦跑馬燈一遍。放寬心準備出遊！"},
+            {"id":"p90","date":"2026/09/24","day":"四","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第一天 (9/24 - 10/01)","notes":"開心地 fly 日本！徹底放鬆充電，完全不用帶課本。"},
+            {"id":"p91","date":"2026/09/25","day":"五","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第二天 (中秋連假開始)","notes":"享受日本美食與風景！"},
+            {"id":"p92","date":"2026/09/26","day":"六","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第三天 (中秋連假)","notes":"開心地玩，好好慰勞這幾個月的辛苦。"},
+            {"id":"p93","date":"2026/09/27","day":"日","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第四天 (中秋連假)","notes":"放鬆身心，呼吸異國空氣。"},
+            {"id":"p94","date":"2026/09/28","day":"一","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第五天 (教師節)","notes":"放假充電。"},
+            {"id":"p95","date":"2026/09/29","day":"二","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第六天","notes":"放假充電。"},
+            {"id":"p96","date":"2026/09/30","day":"三","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第七天","notes":"放假充電。"},
+            {"id":"p97","date":"2026/10/01","day":"四","stage":"放假充電","hours":"0小時","subject":"完全休息","progress":"✈️ 日本旅遊第八天 (最後一天)","notes":"搭機返台。收心，準備迎接黃金輸出刷題期。"},
+            {"id":"p98","date":"2026/10/02","五":"五","stage":"自主收心操","hours":"2小時","subject":"總複習","progress":"快速翻閱全科目自製筆記與公式卡","notes":"收心操。把在日本放飛的思緒與大腦記憶鏈接找回來。"},
+            {"id":"p99","date":"2026/10/03","day":"六","stage":"第二階段：黃金刷題","hours":"3-4小時","subject":"專業科目","progress":"撰寫 108年 中華電信「電信網路建設與維運」考古題","notes":"正式進入狂刷題階段！嚴格計時，先不看答案，找出盲點。"},
+            {"id":"p100","date":"2026/10/04","day":"日","stage":"第二階段：黃金刷題","hours":"3-4小時","subject":"專業科目","progress":"全面訂正 108年 專業科目考古題","notes":"訂正比寫題更重要！每一題的每個選項都要回講義查明原因。"},
+            {"id":"p101","date":"2026/10/05","day":"一","stage":"第二階段：黃金刷題","hours":"2小時","subject":"共同科目","progress":"撰寫與訂正 108年 中華電信英文考題","notes":"練習單字與閱讀考題题感，記錄錯題。"},
+            {"id":"p102","date":"2026/10/06","day":"二","stage":"第二階段：黃金刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 109年 中華電信專業科目考古題 (前半)","notes":"分配作答時間，練習手寫題/大題的排版與公式列式。"},
+            {"id":"p103","date":"2026/10/07","day":"三","stage":"第二階段：黃金刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 109年 中華電信專業科目考古題 (後半) + 全面訂正","notes":"針對錯題部分，立刻翻開計概或網通講義補強。"},
+            {"id":"p104","date":"2026/10/08","day":"四","stage":"第二階段：黃金刷題","hours":"1小時","subject":"共同科目","progress":"共同科目錯題本與高頻單字快速複習","notes":"羽球日。看一看錯題，維持低度頭腦運作。"},
+            {"id":"p105","date":"2026/10/09","day":"五","stage":"国定假日刷題","hours":"2小時","subject":"專業科目","progress":"國慶連假第一天：撰寫 110年 中華電信專業科目考古題","notes":"比照平日2小時原則，寫近幾年考題，難度開始提升。"},
+            {"id":"p106","date":"2026/10/10","day":"六","stage":"国定假日刷題","hours":"3-4小時","subject":"專業科目","progress":"國慶連假第二天：全面訂正 110年 專業科目考古題","notes":"特別留意通訊系統(取樣、數位調變)與子網路計算題。"},
+            {"id":"p107","date":"2026/10/11","day":"日","stage":"国定假日刷題","hours":"3-4小時","subject":"共同科目","progress":"國慶連假第三天：撰寫與訂正 110年 中華電信英文考題","notes":"連假收心，維持雙軌並進。"},
+            {"id":"p108","date":"2026/10/12","day":"一","stage":"第二階段：黃金刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 111年 中華電信專業科目考古題 (前半)","notes":"逼近近年趨勢，注意有無考出新科技觀念。"},
+            {"id":"p109","date":"2026/10/13","day":"二","stage":"第二階段：黃金刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 111年 中華電信專業科目考古題 (後半) + 全面訂正","notes":"精簡作答邏輯，手寫計算題步驟務必清晰。"},
+            {"id":"p110","date":"2026/10/14","day":"三","stage":"第二階段：黃金刷題","hours":"2小時","subject":"共同科目","progress":"撰寫與訂正 111年 中華電信英文考題","notes":"持續補強常考克漏字文法。"},
+            {"id":"p111","date":"2026/10/15","day":"四","stage":"第二階段：黃金刷題","hours":"1小時","subject":"全科目","progress":"快速複習基本電學公式與資安名詞","notes":"羽球日。輕鬆翻閱公式卡。"},
+            {"id":"p112","date":"2026/10/16","day":"五","stage":"第二階段：黃金刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 112年 中華電信專業科目考古題 (前半)","notes":"前一年的最新考題！當成真正的上場模擬。"},
+            {"id":"p113","date":"2026/10/17","day":"六","stage":"第二階段：黃金刷題","hours":"3-4小時","subject":"專業科目","progress":"撰寫 112年 中華電信專業科目考古題 (後半) + 全面訂正","notes":"深入剖析最新一屆題目的出題邏輯與章節配分。"},
+            {"id":"p114","date":"2026/10/18","day":"日","stage":"第二階段：黃金刷題","hours":"3-4小時","subject":"共同科目","progress":"撰寫與訂正 112年 中華電信英文考題並統計分數","notes":"評估自己在歷屆試題的平均得分，強化自信心。"},
+            {"id":"p115","date":"2026/10/19","day":"一","stage":"第二階段：擴大刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 國營事業聯招「計算機概論」考題","notes":"擴大守備範圍。國營事業的計概常有互相借鑑的經典題。"},
+            {"id":"p116","date":"2026/10/20","day":"二","stage":"第二階段：擴大刷題","hours":"2小時","subject":"專業科目","progress":"全面訂正 國營計概考題 + 錯題同步補充到主要筆記","notes":"搞懂死結、OS分頁、SQL新題型。"},
+            {"id":"p117","date":"2026/10/21","day":"三","stage":"第二階段：擴大刷題","hours":"2小時","subject":"專業科目","progress":"撰寫 國營事業聯招「基本電學/電工原理」計算題","notes":"練習在有限空間與時間內算對複雜複數功率、諧振題目。"},
+            {"id":"p118","date":"2026/10/22","day":"四","stage":"專業科目","progress":"網路通信、資安專有名詞縮寫快速默背","notes":"羽球日。背誦縮寫與全稱。"},
+            {"id":"p119","date":"2026/10/23","day":"五","stage":"第二階段：擴大刷題","hours":"2小時","subject":"專業科目","progress":"全面訂正 國營基本電學題目","notes":"把計算卡關的電路圖重新畫一次，理清等效步驟。"},
+            {"id":"p120","date":"2026/10/24","day":"六","stage":"国定假日刷題","hours":"2小時","subject":"全科目","progress":"光復節連假第一天：開啟「二刷錯題本」計畫","notes":"翻開這一個月累積的錯題本，遮住解答重新做一次。"},
+            {"id":"p121","date":"2026/10/25","day":"日","stage":"国定假日刷題","hours":"2小時","subject":"全科目","progress":"光復節連假第二天：二刷 中華電信110-111年錯題","notes":"務必做到看過就不再錯的境界。"},
+            {"id":"p122","date":"2026/10/26","day":"一","stage":"国定假日刷題","hours":"2小時","subject":"全科目","progress":"光復節連假第三天：整理考前10分鐘「終極密技A4」","notes":"將最難記的公式、常錯的資安、網通名詞精簡抄在一張紙上。"},
+            {"id":"p123","date":"2026/10/27至2026/11/12","day":"其餘各天","stage":"黃金衝刺期","hours":"穩定複習","subject":"每日複習","progress":"這段時間維持規律。每天下班1-2小時穩定手感。不熬夜。","notes":"重溫錯題本、公式密技、背單字與調整作息。"},
+            {"id":"p124","date":"2026/11/13","day":"五","stage":"考前最後一夜","hours":"2小時","subject":"全科目","progress":"翻閱「終極密技A4」、檢查文具與准考證、提早入睡","notes":"絕對不要熬夜看新東西！讓大腦充分休息才能在考場發揮。"},
+            {"id":"p125","date":"2026/11/14","day":"六","stage":"金榜題名","hours":"考試日","subject":"🏆 沉著應試","progress":"大功告成！相信這幾個月來的規律與汗水，祝您高分錄取！","notes":"充滿自信、沉著應試、金榜題名！"}
+        ];
+
+        // 預設鎖定在「未完成」清單
+        let currentFilter = 'todo'; 
+
+        // 讀取某張卡片的狀態（todo, delayed, done）
+        function getTaskStatus(id) {
+            return localStorage.getItem(id) || 'todo';
+        }
+
+        // 把資料畫到螢幕上的核心控制功能
+        function renderPlan() {
+            const listContainer = document.getElementById('plan-list');
+            listContainer.innerHTML = ''; // 清空舊內容
+
+            // 1. 先動態計算各區目前的統計數字
+            let countTodo = 0;
+            let countDelayed = 0;
+            let countDone = 0;
+
+            myReadingPlan.forEach(item => {
+                const status = getTaskStatus(item.id);
+                if (status === 'todo') countTodo++;
+                if (status === 'delayed') countDelayed++;
+                if (status === 'done') countDone++;
+            });
+
+            // 更新左側/頂端標籤上的數字泡泡
+            document.getElementById('count-todo').innerText = countTodo;
+            document.getElementById('count-delayed').innerText = countDelayed;
+            document.getElementById('count-done').innerText = countDone;
+
+            // 更新總進度條面板
+            const total = myReadingPlan.length;
+            const progressPercent = total > 0 ? Math.round((countDone / total) * 100) : 0;
+            document.getElementById('progress-bar').style.width = progressPercent + '%';
+            document.getElementById('progress-text').innerText = `總進度：已完成 ${countDone} / ${total} 行程 (${progressPercent}%)`;
+
+            // 2. 根據目前點選的過濾條件，篩選出對應的卡片
+            const filteredPlan = myReadingPlan.filter(item => getTaskStatus(item.id) === currentFilter);
+
+            // 如果該區是空的，顯示精美的提示文字
+            if (filteredPlan.length === 0) {
+                let msg = "🎉 太棒了！目前沒有未完成的計畫！";
+                if (currentFilter === 'delayed') msg = "☀️ 太好了！目前沒有任何被延遲的計畫。";
+                if (currentFilter === 'done') msg = "⏳ 戰鬥尚未開始，加把勁完成第一個行程吧！";
+                listContainer.innerHTML = `<div class="empty-state">${msg}</div>`;
+                return;
+            }
+
+            // 3. 開始繪製篩選後的卡片
+            filteredPlan.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `task-card status-${currentFilter}`;
+                card.setAttribute('onclick', `toggleComplete('${item.id}', event)`);
+
+                let badgeClass = "badge-subject";
+                if(item.subject === "完全休息") badgeClass = "badge-rest";
+
+                // 動態判斷右下角該顯示什麼控制按鈕
+                let actionButtonHTML = '';
+                if (currentFilter === 'todo') {
+                    actionButtonHTML = `<button class="action-btn delay-trigger" onclick="changeStatus('${item.id}', 'delayed', event)">⚠️ 標記延遲</button>`;
+                } else if (currentFilter === 'delayed') {
+                    actionButtonHTML = `<button class="action-btn" onclick="changeStatus('${item.id}', 'todo', event)">↩️ 回歸未完成</button>`;
+                }
+
+                card.innerHTML = `
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="check_${item.id}" ${currentFilter === 'done' ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                    </div>
+                    <div class="task-content">
+                        <div class="badge-group">
+                            <span class="badge ${badgeClass}">${item.subject}</span>
+                            <span class="badge badge-stage">${item.stage}</span>
+                            ${currentFilter === 'delayed' ? '<span class="badge badge-status-delayed">延遲中</span>' : ''}
+                        </div>
+                        <div class="task-title">${item.progress}</div>
+                        <div class="task-meta">
+                            <span>📅 ${item.date} (${item.day})</span>
+                            <span>⏱️ ${item.hours}</span>
+                        </div>
+                        ${item.notes ? `<div class="task-notes">💡 ${item.notes}</div>` : ''}
+                        ${actionButtonHTML ? `<div class="card-actions">${actionButtonHTML}</div>` : ''}
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // 當點擊左側圓形勾選鈕（或整張卡片）時，在 完成 與 未完成 之間切換
+        function toggleComplete(id, event) {
+            // 避免點擊到右下角的延遲/回歸按鈕或勾選框本體時產生衝突
+            if(event.target.tagName === 'INPUT' || event.target.classList.contains('action-btn')) return;
+            
+            const currentStatus = getTaskStatus(id);
+            if (currentStatus === 'done') {
+                localStorage.setItem(id, 'todo'); // 取消打勾，回歸未完成
+            } else {
+                localStorage.setItem(id, 'done'); // 打勾，送進已完成
+            }
+            renderPlan();
+        }
+
+        // 精準更改狀態的功能（專門處理 延遲 互轉 未完成）
+        function changeStatus(id, newStatus, event) {
+            event.stopPropagation(); // 阻止事件冒泡，防止觸發卡片完成點擊
+            localStorage.setItem(id, newStatus);
+            renderPlan();
+        }
+
+        // 切換左側/頂端選單欄位
+        function switchFilter(filterName) {
+            currentFilter = filterName;
+            
+            // 移除所有按鈕的 active 藍色亮起樣式
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            // 幫當前點選的按鈕貼上 active 樣式
+            if(filterName === 'todo') document.getElementById('btn-todo').classList.add('active');
+            if(filterName === 'delayed') document.getElementById('btn-delayed').classList.add('active');
+            if(filterName === 'done') document.getElementById('btn-done').classList.add('active');
+
+            // 更新主畫面的標題文字
+            const viewTitle = document.getElementById('current-view-title');
+            if(filterName === 'todo') viewTitle.innerText = "⏳ 未完成計畫";
+            if(filterName === 'delayed') viewTitle.innerText = "⚠️ 延遲待完成計畫";
+            if(filterName === 'done') viewTitle.innerText = "✅ 已完成項目";
+
+            // 重新刷新畫面
+            renderPlan();
+        }
+
+        // 網頁一打開，立刻執行
+        renderPlan();
+    </script>
+
+</body>
+</html>
