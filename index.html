@@ -40,7 +40,7 @@
             background-color: var(--card-bg);
             padding: 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-            z-index: 10;
+            z-index: 1001;
         }
 
         .main-content {
@@ -146,18 +146,30 @@
             font-weight: 700;
         }
 
-        /* 頂端總進度面板 */
+        /* --- 核心優化：頂端固定吸頂面板外殼 --- */
+        .header-sticky-wrapper {
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            padding-top: 12px;
+            padding-bottom: 4px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 767px) {
+            .header-sticky-wrapper {
+                top: 55px; /* 在手機版扣除上方導覽列的高度，完美銜接 */
+                padding-top: 8px;
+            }
+        }
+
         .header-section {
             background: var(--card-bg);
             border-radius: 16px;
             padding: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
             text-align: center;
-            margin-top: 16px;
-            margin-bottom: 16px;
         }
-
-        @media (min-width: 768px) { .header-section { margin-top: 0; } }
 
         h1 {
             font-size: 18px;
@@ -192,7 +204,7 @@
             font-size: 15px;
             font-weight: 700;
             color: #1d1d1f;
-            margin: 10px 0 12px 4px;
+            margin: 16px 0 12px 4px;
         }
 
         /* 讀書卡片設計 */
@@ -275,6 +287,47 @@
         .task-meta { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; display: flex; gap: 10px; }
         .task-notes { font-size: 12px; color: #8a4b00; background-color: #fff9e6; padding: 8px 12px; border-radius: 10px; border-left: 4px solid var(--accent-color); margin-top: 6px; line-height: 1.4; }
 
+        /* --- 核心優化：延遲專區時間輸入盒樣式 --- */
+        .time-tracker-box {
+            margin-top: 12px;
+            padding: 10px 12px;
+            background-color: #f2f2f7;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 12px;
+            color: #3a3a3c;
+            font-weight: 600;
+        }
+        
+        .time-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .time-input {
+            width: 36px;
+            padding: 4px;
+            border: 1px solid #c7c7cc;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            background-color: #fff;
+            -moz-appearance: textfield;
+        }
+
+        /* 隱藏數字輸入鈕箭頭 */
+        .time-input::-webkit-outer-spin-button,
+        .time-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         /* 卡片右下角控制按鈕區 */
         .card-actions {
             display: flex;
@@ -333,12 +386,14 @@
         </div>
 
         <div class="main-content">
-            <div class="header-section">
-               <h1 id="main-title">🏆 讀書計畫</h1>
-                <div class="progress-wrapper">
-                    <div class="progress-bar" id="progress-bar"></div>
+            <div class="header-sticky-wrapper">
+                <div class="header-section">
+                   <h1 id="main-title">🏆 讀書計畫</h1>
+                    <div class="progress-wrapper">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">總進度：已完成 0 / 0 (0%)</div>
                 </div>
-                <div class="progress-text" id="progress-text">總進度：已完成 0 / 0 (0%)</div>
             </div>
 
             <div class="section-title" id="current-view-title">⏳ 未完成計畫</div>
@@ -382,7 +437,7 @@
             {"id":"p31","date":"2026/07/27","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"02-01_進階核心單字/名詞1~300","notes":"進入進階單字。每天給自己一個高強度輸入。"},
             {"id":"p32","date":"2026/07/28","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"05-01_例題5 例題解析 P59 與 05-02_Y與△互換","notes":"Y-Delta互換與最大功率傳輸定理。動手多計算。"},
             {"id":"p33","date":"2026/07/29","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"05_有線網路-碰撞偵測","notes":"CSMA/CD與CSMA/CA原理對比。電信網路建設大考點！"},
-            {"id":"p34","date":"2026/07/30","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"02-02_進階核心單字/名詞301~684(前半)","notes":"羽球日。進度折半，看一小時進階名詞單字。"},
+            {"id":"p34","date":"2026/07/30","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"02-02_進階核心單字/名詞301~684(前半)","notes":"羽球日。進度折半，看一小時進階名詞單字. 人。"},
             {"id":"p35","date":"2026/07/31","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"15_Call by reference","notes":"參數傳遞機制(Call by value/reference/name)對比。"},
             {"id":"p36","date":"2026/08/01","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"08-01_第8章 從類比到數位(ADC 原理)/8.1 線碼格式","notes":"轉入數位通信。數位信號線碼(Line Code)種類如AMI、HDB3。"},
             {"id":"p37","date":"2026/08/02","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"16_抽象類別 與 17_最大公因數","notes":"抽象類別與介面差異。後半段為演算法基礎與遞迴觀念。"},
@@ -405,7 +460,7 @@
             {"id":"p54","date":"2026/08/19","day":"三","stage":"第一階段：函授輸入","hours":"2小時","subject":"網路通信","progress":"08_應用層","notes":"常見應用層協定：DNS, DHCP, HTTP, FTP 埠號(Port)背熟。"},
             {"id":"p55","date":"2026/08/20","day":"四","stage":"第一階段：函授輸入","hours":"1小時","subject":"英文","progress":"03-03_助動詞","notes":"羽球日。常規助動詞與情態助動詞用法。"},
             {"id":"p56","date":"2026/08/21","day":"五","stage":"第一階段：函授輸入","hours":"2小時","subject":"計算機概論","progress":"23_高等樹","notes":"AVL樹、B-Tree等進階樹狀結構定義，通常考選擇題觀念。"},
-            {"id":"p57","date":"2026/08/22","day":"六","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"通訊系統","progress":"08-04_8.3 量化 與 08-05_8.4 多工技術","notes":"PCM脈衝碼調變系統。量化階數、量化誤差與TDM多工。"},
+            {"id":"p57","date":"2026/08/22","day":"六","stage":"通訊系統","progress":"08-04_8.3 量化 與 08-05_8.4 多工技術","notes":"PCM脈衝碼調變系統。量化階數、量化誤差與TDM多工。"},
             {"id":"p58","date":"2026/08/23","day":"日","stage":"第一階段：函授輸入","hours":"3-4小時","subject":"計算機概論","progress":"24_常見的設備 與 25_資料鏈結層-乙太網路","notes":"集線器、交換器、路由器差異；VLAN概念。(與網通高度重疊)"},
             {"id":"p59","date":"2026/08/24","day":"一","stage":"第一階段：函授輸入","hours":"2小時","subject":"英文","progress":"03-04_被動語態 與 03-05_不定詞與動名詞","notes":"精選文法高頻考點：被動語態與動詞後接to V或V-ing。"},
             {"id":"p60","date":"2026/08/25","day":"二","stage":"第一階段：函授輸入","hours":"2小時","subject":"基本電學","progress":"09_ex8 p.116","notes":"直流暫態電路(RC/RL充放電)。時間常數(Tau)計算要非常熟。"},
@@ -535,10 +590,32 @@
 
                 // 動態判斷右下角該顯示什麼控制按鈕
                 let actionButtonHTML = '';
+                let timeTrackerHTML = '';
+
                 if (currentFilter === 'todo') {
                     actionButtonHTML = `<button class="action-btn delay-trigger" onclick="changeStatus('${item.id}', 'delayed', event)">⚠️ 標記延遲</button>`;
                 } else if (currentFilter === 'delayed') {
                     actionButtonHTML = `<button class="action-btn" onclick="changeStatus('${item.id}', 'todo', event)">↩️ 回歸未完成</button>`;
+                    
+                    // 【全新優化：如果在延遲待完成狀態，長出時分秒欄位】
+                    const savedH = localStorage.getItem(`th_${item.id}`) || '';
+                    const savedM = localStorage.getItem(`tm_${item.id}`) || '';
+                    const savedS = localStorage.getItem(`ts_${item.id}`) || '';
+
+                    timeTrackerHTML = `
+                        <div class="time-tracker-box" onclick="event.stopPropagation()">
+                            <span>📍 看到：</span>
+                            <div class="time-input-wrapper">
+                                <input type="number" class="time-input" id="h_${item.id}" placeholder="00" min="0" value="${savedH}" oninput="saveVideoTime('${item.id}')"><span>時</span>
+                            </div>
+                            <div class="time-input-wrapper">
+                                <input type="number" class="time-input" id="m_${item.id}" placeholder="00" min="0" max="59" value="${savedM}" oninput="saveVideoTime('${item.id}')"><span>分</span>
+                            </div>
+                            <div class="time-input-wrapper">
+                                <input type="number" class="time-input" id="s_${item.id}" placeholder="00" min="0" max="59" value="${savedS}" oninput="saveVideoTime('${item.id}')"><span>秒</span>
+                            </div>
+                        </div>
+                    `;
                 }
 
                 card.innerHTML = `
@@ -558,6 +635,7 @@
                             <span>⏱️ ${item.hours}</span>
                         </div>
                         ${item.notes ? `<div class="task-notes">💡 ${item.notes}</div>` : ''}
+                        ${timeTrackerHTML}
                         ${actionButtonHTML ? `<div class="card-actions">${actionButtonHTML}</div>` : ''}
                     </div>
                 `;
@@ -565,9 +643,18 @@
             });
         }
 
+        // 獨立記憶體：專門即時保存時分秒進度
+        function saveVideoTime(id) {
+            const h = document.getElementById(`h_${id}`).value;
+            const m = document.getElementById(`m_${id}`).value;
+            const s = document.getElementById(`s_${id}`).value;
+            localStorage.setItem(`th_${id}`, h);
+            localStorage.setItem(`tm_${id}`, m);
+            localStorage.setItem(`ts_${id}`, s);
+        }
+
         // 當點擊左側圓形勾選鈕（或整張卡片）時，在 完成 與 未完成 之間切換
         function toggleComplete(id, event) {
-            // 避免點擊到右下角的延遲/回歸按鈕或勾選框本體時產生衝突
             if(event.target.tagName === 'INPUT' || event.target.classList.contains('action-btn')) return;
             
             const currentStatus = getTaskStatus(id);
@@ -590,24 +677,19 @@
         function switchFilter(filterName) {
             currentFilter = filterName;
             
-            // 移除所有按鈕的 active 藍色亮起樣式
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            // 幫當前點選的按鈕貼上 active 樣式
             if(filterName === 'todo') document.getElementById('btn-todo').classList.add('active');
             if(filterName === 'delayed') document.getElementById('btn-delayed').classList.add('active');
             if(filterName === 'done') document.getElementById('btn-done').classList.add('active');
 
-            // 更新主畫面的標題文字
             const viewTitle = document.getElementById('current-view-title');
             if(filterName === 'todo') viewTitle.innerText = "⏳ 未完成計畫";
             if(filterName === 'delayed') viewTitle.innerText = "⚠️ 延遲待完成計畫";
             if(filterName === 'done') viewTitle.innerText = "✅ 已完成項目";
 
-            // 重新刷新畫面
             renderPlan();
         }
 
-        // 網頁一打開，立刻執行
         renderPlan();
     </script>
 
